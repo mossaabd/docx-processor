@@ -25,11 +25,19 @@ def process_document(input_file):
         # Load the document from the file object
         doc = Document(input_file)
         
-        # Process each paragraph in the document
+        # First pass: Set all paragraph styles to Normal
         for paragraph in doc.paragraphs:
-            # Reset paragraph style to normal
-            paragraph.style = 'Normal'
+            paragraph.style = doc.styles['Normal']
             
+        # Process tables if any
+        for table in doc.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    for paragraph in cell.paragraphs:
+                        paragraph.style = doc.styles['Normal']
+        
+        # Second pass: Apply font settings
+        for paragraph in doc.paragraphs:
             for run in paragraph.runs:
                 try:
                     # Remove highlight if it exists
@@ -40,20 +48,14 @@ def process_document(input_file):
                     font = run.font
                     font.name = 'Calibri'
                     font.size = Pt(16)
-                    
-                    # Clear any character style
-                    run.style = None
                 except Exception as e:
                     print(f"Error processing run in paragraph: {str(e)}")
         
-        # Process text in tables if any
+        # Process font in tables
         for table in doc.tables:
             for row in table.rows:
                 for cell in row.cells:
                     for paragraph in cell.paragraphs:
-                        # Reset paragraph style to normal
-                        paragraph.style = 'Normal'
-                        
                         for run in paragraph.runs:
                             try:
                                 # Remove highlight if it exists
@@ -64,9 +66,6 @@ def process_document(input_file):
                                 font = run.font
                                 font.name = 'Calibri'
                                 font.size = Pt(16)
-                                
-                                # Clear any character style
-                                run.style = None
                             except Exception as e:
                                 print(f"Error processing run in table: {str(e)}")
         
