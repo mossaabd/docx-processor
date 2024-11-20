@@ -9,7 +9,7 @@ interface FileStatus {
   file?: File;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'https://docx-processor-api-1nos.onrender.com';
 
 function App() {
   const [files, setFiles] = useState<FileStatus[]>([]);

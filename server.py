@@ -13,7 +13,7 @@ CORS(app, resources={
     r"/api/*": {
         "origins": [
             "http://localhost:5173",
-            "https://docx-processor.onrender.com"  # Add your Render frontend URL
+            "https://docx-processor-1nos.onrender.com"  # Your frontend URL
         ],
         "methods": ["POST"],
         "allow_headers": ["Content-Type"]
