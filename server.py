@@ -27,10 +27,13 @@ def process_document(input_file):
         
         # First pass: Remove shading
         for paragraph in doc.paragraphs:
-            # Remove paragraph shading
+            # Remove paragraph shading - with safer attribute checking
             if hasattr(paragraph._p, 'pPr') and paragraph._p.pPr is not None:
-                if paragraph._p.pPr.shd is not None:
-                    paragraph._p.pPr.remove(paragraph._p.pPr.shd)
+                try:
+                    if hasattr(paragraph._p.pPr, 'shd'):
+                        paragraph._p.pPr.remove(paragraph._p.pPr.shd)
+                except Exception as e:
+                    print(f"Warning: Could not remove shading from paragraph: {str(e)}")
             
             # Process runs in paragraph
             for run in paragraph.runs:
@@ -51,10 +54,13 @@ def process_document(input_file):
             for row in table.rows:
                 for cell in row.cells:
                     for paragraph in cell.paragraphs:
-                        # Remove paragraph shading in tables
+                        # Remove paragraph shading in tables - with safer attribute checking
                         if hasattr(paragraph._p, 'pPr') and paragraph._p.pPr is not None:
-                            if paragraph._p.pPr.shd is not None:
-                                paragraph._p.pPr.remove(paragraph._p.pPr.shd)
+                            try:
+                                if hasattr(paragraph._p.pPr, 'shd'):
+                                    paragraph._p.pPr.remove(paragraph._p.pPr.shd)
+                            except Exception as e:
+                                print(f"Warning: Could not remove shading from table paragraph: {str(e)}")
                         
                         # Process runs in table cells
                         for run in paragraph.runs:
