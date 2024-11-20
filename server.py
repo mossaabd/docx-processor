@@ -25,9 +25,13 @@ def process_document(input_file):
         # Load the document from the file object
         doc = Document(input_file)
         
-        # First pass: Set all paragraph styles to Normal
+        # First pass: Set all paragraph styles to Normal and remove shading
         for paragraph in doc.paragraphs:
             paragraph.style = doc.styles['Normal']
+            # Remove paragraph shading
+            if hasattr(paragraph._p, 'pPr') and paragraph._p.pPr is not None:
+                if paragraph._p.pPr.shd is not None:
+                    paragraph._p.pPr.remove(paragraph._p.pPr.shd)
             
         # Process tables if any
         for table in doc.tables:
@@ -35,6 +39,10 @@ def process_document(input_file):
                 for cell in row.cells:
                     for paragraph in cell.paragraphs:
                         paragraph.style = doc.styles['Normal']
+                        # Remove paragraph shading in tables
+                        if hasattr(paragraph._p, 'pPr') and paragraph._p.pPr is not None:
+                            if paragraph._p.pPr.shd is not None:
+                                paragraph._p.pPr.remove(paragraph._p.pPr.shd)
         
         # Second pass: Apply font settings
         for paragraph in doc.paragraphs:
