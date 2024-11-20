@@ -27,6 +27,9 @@ def process_document(input_file):
         
         # Process each paragraph in the document
         for paragraph in doc.paragraphs:
+            # Reset paragraph style to normal
+            paragraph.style = 'Normal'
+            
             for run in paragraph.runs:
                 try:
                     # Remove highlight if it exists
@@ -37,6 +40,9 @@ def process_document(input_file):
                     font = run.font
                     font.name = 'Calibri'
                     font.size = Pt(16)
+                    
+                    # Clear any character style
+                    run.style = None
                 except Exception as e:
                     print(f"Error processing run in paragraph: {str(e)}")
         
@@ -45,6 +51,9 @@ def process_document(input_file):
             for row in table.rows:
                 for cell in row.cells:
                     for paragraph in cell.paragraphs:
+                        # Reset paragraph style to normal
+                        paragraph.style = 'Normal'
+                        
                         for run in paragraph.runs:
                             try:
                                 # Remove highlight if it exists
@@ -55,6 +64,9 @@ def process_document(input_file):
                                 font = run.font
                                 font.name = 'Calibri'
                                 font.size = Pt(16)
+                                
+                                # Clear any character style
+                                run.style = None
                             except Exception as e:
                                 print(f"Error processing run in table: {str(e)}")
         
