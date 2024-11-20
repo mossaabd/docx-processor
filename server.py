@@ -25,27 +25,14 @@ def process_document(input_file):
         # Load the document from the file object
         doc = Document(input_file)
         
-        # First pass: Set all paragraph styles to Normal and remove shading
+        # First pass: Remove shading
         for paragraph in doc.paragraphs:
-            paragraph.style = doc.styles['Normal']
             # Remove paragraph shading
             if hasattr(paragraph._p, 'pPr') and paragraph._p.pPr is not None:
                 if paragraph._p.pPr.shd is not None:
                     paragraph._p.pPr.remove(paragraph._p.pPr.shd)
             
-        # Process tables if any
-        for table in doc.tables:
-            for row in table.rows:
-                for cell in row.cells:
-                    for paragraph in cell.paragraphs:
-                        paragraph.style = doc.styles['Normal']
-                        # Remove paragraph shading in tables
-                        if hasattr(paragraph._p, 'pPr') and paragraph._p.pPr is not None:
-                            if paragraph._p.pPr.shd is not None:
-                                paragraph._p.pPr.remove(paragraph._p.pPr.shd)
-        
-        # Second pass: Apply font settings
-        for paragraph in doc.paragraphs:
+            # Process runs in paragraph
             for run in paragraph.runs:
                 try:
                     # Remove highlight if it exists
@@ -59,11 +46,17 @@ def process_document(input_file):
                 except Exception as e:
                     print(f"Error processing run in paragraph: {str(e)}")
         
-        # Process font in tables
+        # Process tables if any
         for table in doc.tables:
             for row in table.rows:
                 for cell in row.cells:
                     for paragraph in cell.paragraphs:
+                        # Remove paragraph shading in tables
+                        if hasattr(paragraph._p, 'pPr') and paragraph._p.pPr is not None:
+                            if paragraph._p.pPr.shd is not None:
+                                paragraph._p.pPr.remove(paragraph._p.pPr.shd)
+                        
+                        # Process runs in table cells
                         for run in paragraph.runs:
                             try:
                                 # Remove highlight if it exists
