@@ -9,6 +9,8 @@ interface FileStatus {
   file?: File;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function App() {
   const [files, setFiles] = useState<FileStatus[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -41,7 +43,7 @@ function App() {
     });
 
     try {
-      const response = await fetch('/api/process', {
+      const response = await fetch(`${API_URL}/api/process`, {
         method: 'POST',
         body: formData,
       });
@@ -64,6 +66,7 @@ function App() {
         })));
       }
     } catch (error) {
+      console.error('Error:', error);
       setFiles(prev => prev.map(f => ({
         ...f,
         status: 'error',
