@@ -36,25 +36,13 @@ def process_document(input_file):
                     for paragraph in cell.paragraphs:
                         paragraph.style = doc.styles['Normal']
         
-        # Second pass: Apply font settings and clear all formatting
+        # Second pass: Apply font settings
         for paragraph in doc.paragraphs:
             for run in paragraph.runs:
                 try:
-                    # Clear all run formatting
-                    run.clear()
-                    
-                    # Remove all types of highlighting
-                    if hasattr(run._element, 'rPr'):
-                        rPr = run._element.rPr
-                        if rPr is not None:
-                            # Clear highlight
-                            rPr.highlight_val = None
-                            # Clear any underline
-                            if hasattr(rPr, 'u'):
-                                rPr.u = None
-                            # Clear any color
-                            if hasattr(rPr, 'color'):
-                                rPr.color = None
+                    # Remove highlight if it exists
+                    if hasattr(run._element, 'rPr') and run._element.rPr is not None:
+                        run._element.rPr.highlight_val = None
                     
                     # Set font to Calibri and size to 16
                     font = run.font
@@ -70,21 +58,9 @@ def process_document(input_file):
                     for paragraph in cell.paragraphs:
                         for run in paragraph.runs:
                             try:
-                                # Clear all run formatting
-                                run.clear()
-                                
-                                # Remove all types of highlighting
-                                if hasattr(run._element, 'rPr'):
-                                    rPr = run._element.rPr
-                                    if rPr is not None:
-                                        # Clear highlight
-                                        rPr.highlight_val = None
-                                        # Clear any underline
-                                        if hasattr(rPr, 'u'):
-                                            rPr.u = None
-                                        # Clear any color
-                                        if hasattr(rPr, 'color'):
-                                            rPr.color = None
+                                # Remove highlight if it exists
+                                if hasattr(run._element, 'rPr') and run._element.rPr is not None:
+                                    run._element.rPr.highlight_val = None
                                 
                                 # Set font to Calibri and size to 16
                                 font = run.font
