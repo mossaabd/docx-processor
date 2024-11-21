@@ -2,7 +2,8 @@ from flask import Flask, request, send_file
 from flask_cors import CORS
 from docx import Document
 from docx.shared import Pt
-from docx.enum.text import WD_COLOR_INDEX
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
 import os
 import zipfile
 import io
@@ -25,15 +26,25 @@ def process_document(input_file):
         # Load the document from the file object
         doc = Document(input_file)
         
-        # First pass: Remove shading
+        # First pass: Remove shading and apply formatting
         for paragraph in doc.paragraphs:
-            # Remove paragraph shading - with safer attribute checking
+            # Set paragraph shading to no color
             if hasattr(paragraph._p, 'pPr') and paragraph._p.pPr is not None:
                 try:
-                    if hasattr(paragraph._p.pPr, 'shd'):
-                        paragraph._p.pPr.remove(paragraph._p.pPr.shd)
+                    # Create shading element
+                    shd = OxmlElement('w:shd')
+                    shd.set(qn('w:fill'), "FFFFFF")
+                    shd.set(qn('w:val'), "clear")
+                    
+                    # Remove existing shading if any
+                    existing_shd = paragraph._p.pPr.find(qn('w:shd'))
+                    if existing_shd is not None:
+                        paragraph._p.pPr.remove(existing_shd)
+                    
+                    # Add new shading
+                    paragraph._p.pPr.append(shd)
                 except Exception as e:
-                    print(f"Warning: Could not remove shading from paragraph: {str(e)}")
+                    print(f"Warning: Could not set shading for paragraph: {str(e)}")
             
             # Process runs in paragraph
             for run in paragraph.runs:
@@ -54,13 +65,23 @@ def process_document(input_file):
             for row in table.rows:
                 for cell in row.cells:
                     for paragraph in cell.paragraphs:
-                        # Remove paragraph shading in tables - with safer attribute checking
+                        # Set paragraph shading to no color in tables
                         if hasattr(paragraph._p, 'pPr') and paragraph._p.pPr is not None:
                             try:
-                                if hasattr(paragraph._p.pPr, 'shd'):
-                                    paragraph._p.pPr.remove(paragraph._p.pPr.shd)
+                                # Create shading element
+                                shd = OxmlElement('w:shd')
+                                shd.set(qn('w:fill'), "FFFFFF")
+                                shd.set(qn('w:val'), "clear")
+                                
+                                # Remove existing shading if any
+                                existing_shd = paragraph._p.pPr.find(qn('w:shd'))
+                                if existing_shd is not None:
+                                    paragraph._p.pPr.remove(existing_shd)
+                                
+                                # Add new shading
+                                paragraph._p.pPr.append(shd)
                             except Exception as e:
-                                print(f"Warning: Could not remove shading from table paragraph: {str(e)}")
+                                print(f"Warning: Could not set shading for table paragraph: {str(e)}")
                         
                         # Process runs in table cells
                         for run in paragraph.runs:
