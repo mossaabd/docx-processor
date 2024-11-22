@@ -53,10 +53,10 @@ def process_document(input_file):
                     if hasattr(run._element, 'rPr') and run._element.rPr is not None:
                         run._element.rPr.highlight_val = None
                     
-                    # Set font to Calibri and size to 16
+                    # Set font to Calibri and size to 14
                     font = run.font
                     font.name = 'Calibri'
-                    font.size = Pt(16)
+                    font.size = Pt(14)
                 except Exception as e:
                     print(f"Error processing run in paragraph: {str(e)}")
         
@@ -90,10 +90,10 @@ def process_document(input_file):
                                 if hasattr(run._element, 'rPr') and run._element.rPr is not None:
                                     run._element.rPr.highlight_val = None
                                 
-                                # Set font to Calibri and size to 16
+                                # Set font to Calibri and size to 14
                                 font = run.font
                                 font.name = 'Calibri'
-                                font.size = Pt(16)
+                                font.size = Pt(14)
                             except Exception as e:
                                 print(f"Error processing run in table: {str(e)}")
         
